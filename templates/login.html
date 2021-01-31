@@ -1,0 +1,17 @@
+{% extends "base.html" %} {%block content%}
+
+<h1 style="text-align: center;color: rgb(88, 49, 49);font-weight: bold;margin-bottom: 1em;"> Login</h1>
+
+<form action="/login_validation" method="POST">
+
+    {{form.hidden_tag()}}
+    <p>
+        {{ form.csrf_token }}
+        <label>Email</label>{{form.email}}<br>
+        <label>Password</label> {{form.password}}<br>
+    </p>
+    <p>not registered?<a href="/register" style="text-decoration: none;"> register here</a></p><br>
+    <button type="submit" class="btn btn-primary" style="margin-bottom:1em;margin-top: -1.5em;">login</button>
+    </div>
+</form>
+{%endblock%}

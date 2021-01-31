@@ -1,0 +1,95 @@
+{% extends "base.html" %} {%block content%}
+
+<h1 style="text-align: center;color: rgb(88, 49, 49);font-weight: bold;margin-bottom: 1em;">Registration</h1>
+
+
+{{form.hidden_tag()}}
+<p>
+    {{ form.csrf_token }}
+    <label>Name</label>{{form.name}}<br>
+    <label>Rollno.</label> {{form.rollno}}<br>
+    <label>Email</label>{{form.email}}<br>
+    <label>Password</label> {{form.password}}<br>
+    <label>Current Standard</label>{{form.standard}}<br>
+    <div id='display_marks'>
+        <!-- <label>Enter previous marks</label><br>
+            <input id='standard1' placeholder='Enter standard' style='width: 24%;'>
+            <input id='grade1' placeholder='Enter grade ' style='width: 24%;'>
+            <input id='remark1' placeholder='Enter Remark ' style='width: 24%;'>
+            <input id='percentage1' placeholder='Enter percentage ' style='width: 26%;'> -->
+    </div>
+</p>
+<p>already registered?<a href="/" style="text-decoration: none;"> login here</a></p><br>
+<button type="submit" class="btn btn-primary" style="margin-bottom:1em;margin-top: -1.5em;" onclick="submitData()">Submit</button>
+</div>
+
+{%endblock%} {% block javascript %}
+<script>
+    function validateForm(registrationObject) {
+        // for validation of name 
+        if (registrationObject.name.length < 2) {
+            alert("name should be more than 2 characters !");
+            return false;
+        }
+
+
+
+        return true;
+    }
+
+    function submitData() {
+        var registrationObject = new Object();
+        registrationObject.name = document.getElementById("name").value;
+        registrationObject.rollno = document.getElementById("rollno").value;
+        registrationObject.email = document.getElementById("email").value;
+        registrationObject.password = document.getElementById("password").value;
+        registrationObject.standard = document.getElementById("standard").value;
+        var standard = document.getElementById("standard").value;
+        var marksDetailArray = new Array();
+        var newObject = new Object();
+        for (var i = 1; i < standard; i++) {
+            newObject.std = i;
+            newObject.remark = $("#remark" + i).val();
+            newObject.grade = $("#grade" + i).val();
+            newObject.percentage = $("#percentage" + i).val();
+            marksDetailArray.push(newObject);
+        }
+        registrationObject.marksDetails = marksDetailArray;
+        if (validateForm(registrationObject)) {
+            var serverData = JSON.stringify(registrationObject);
+            var url = "/add_user/" + serverData + "/";
+            // database insert
+            var request = $.ajax({
+                url: url,
+                type: "POST",
+                data: "",
+
+            });
+
+            request.done(function(msg) {
+                // $("#log").html(msg);
+                window.location.href = "/";
+            });
+
+            request.fail(function(jqXHR, textStatus) {
+                alert("Request failed: " + textStatus);
+            });
+        }
+
+    }
+    $(document).ready(function() {
+        $("#standard").change(function() {
+            $("#display_marks").empty();
+            var value = $("#standard").val();
+            var html = ""
+            for (var i = 1; i < value; i++) {
+                html += "<h4>For STD " + i + "</h4> <input id='standard" + i + "' placeholder='Enter standard' style='width: 24%;'> <input id='grade" + i + "' placeholder='Enter grade ' style='width: 24%;'> <input id='remark" + i + "' placeholder='Enter Remark ' style='width: 24%;'> <input id='percentage" + i + "' placeholder='Enter percentage ' style='width: 26%;'>";
+
+
+            }
+            $("#display_marks").append(html);
+
+        });
+    });
+</script>
+{% endblock %}
